@@ -278,8 +278,9 @@ const seedDatabase = async (force = false) => {
     const adminExists = await User.findOne({ email: 'admin@taskie.com' });
 
     // Seed Job Categories
-    if (force || categoryCount === 0) {
-      if (force && categoryCount > 0) {
+    if (force) {
+      // Force mode: clear and reseed everything
+      if (categoryCount > 0) {
         console.log('🗑️  Clearing existing job categories...');
         await JobCategory.deleteMany({});
       }
@@ -288,9 +289,33 @@ const seedDatabase = async (force = false) => {
       await JobCategory.insertMany(categories);
       results.categories.inserted = categories.length;
       console.log(`✅ Inserted ${categories.length} job categories`);
+    } else if (categoryCount === 0) {
+      // Database is empty: insert all categories
+      console.log('📝 Seeding job categories...');
+      await JobCategory.insertMany(categories);
+      results.categories.inserted = categories.length;
+      console.log(`✅ Inserted ${categories.length} job categories`);
     } else {
-      results.categories.skipped = true;
-      console.log(`ℹ️  Job categories already exist (${categoryCount} found). Skipping...`);
+      // Database has some categories: add missing ones intelligently
+      console.log('📝 Checking for missing job categories...');
+      let insertedCount = 0;
+      
+      for (const category of categories) {
+        const exists = await JobCategory.findOne({ name: category.name });
+        if (!exists) {
+          await JobCategory.create(category);
+          insertedCount++;
+          console.log(`  ✅ Added: ${category.name}`);
+        }
+      }
+      
+      if (insertedCount > 0) {
+        results.categories.inserted = insertedCount;
+        console.log(`✅ Added ${insertedCount} new job category(ies)`);
+      } else {
+        results.categories.skipped = true;
+        console.log(`ℹ️  All job categories already exist (${categoryCount} found). No new categories added.`);
+      }
     }
 
     // Seed Locations
