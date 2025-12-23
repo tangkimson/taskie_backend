@@ -1,6 +1,6 @@
 // Location Model
 // Represents provinces/cities and their wards/communes
-// For this project, we focus on Huế city
+// Supports multiple provinces/cities (Huế, Quảng Ninh, etc.)
 
 const mongoose = require('mongoose');
 

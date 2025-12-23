@@ -51,7 +51,8 @@ const categories = [
   }
 ];
 
-// Location data for Huế city
+// Location data - Multiple provinces/cities
+// Structure designed to easily add more provinces in the future
 const locations = [
   {
     province: 'Thành phố Huế',
@@ -82,6 +83,177 @@ const locations = [
       'Phường Hương Hồ',
       'Phường Hương Vinh',
       'Phường Hương An'
+    ]
+  },
+  {
+    province: 'Thành phố Hạ Long',
+    wards: [
+      'Phường Bạch Đằng',
+      'Phường Bãi Cháy',
+      'Phường Cao Thắng',
+      'Phường Cao Xanh',
+      'Phường Đại Yên',
+      'Phường Giếng Đáy',
+      'Phường Hà Khánh',
+      'Phường Hà Khẩu',
+      'Phường Hà Lầm',
+      'Phường Hà Phong',
+      'Phường Hà Trung',
+      'Phường Hà Tu',
+      'Phường Hồng Gai',
+      'Phường Hồng Hà',
+      'Phường Hồng Hải',
+      'Phường Hùng Thắng',
+      'Phường Trần Hưng Đạo',
+      'Phường Tuần Châu',
+      'Phường Việt Hưng',
+      'Phường Yết Kiêu',
+      'Xã Bằng Cả',
+      'Xã Dân Chủ',
+      'Xã Đồng Lâm',
+      'Xã Đồng Sơn',
+      'Xã Hòa Bình',
+      'Xã Kỳ Thượng',
+      'Xã Lê Lợi',
+      'Xã Sơn Dương',
+      'Xã Tân Dân',
+      'Xã Thống Nhất',
+      'Xã Vũ Oai'
+    ]
+  },
+  {
+    province: 'Thành phố Móng Cái',
+    wards: [
+      'Phường Bình Ngọc',
+      'Phường Hải Hòa',
+      'Phường Hải Yên',
+      'Phường Hòa Lạc',
+      'Phường Ka Long',
+      'Phường Ninh Dương',
+      'Phường Trà Cổ',
+      'Phường Trần Phú',
+      'Xã Bắc Sơn',
+      'Xã Hải Đông',
+      'Xã Hải Sơn',
+      'Xã Hải Tiến',
+      'Xã Hải Xuân',
+      'Xã Quảng Nghĩa',
+      'Xã Vạn Ninh',
+      'Xã Vĩnh Thực',
+      'Xã Vĩnh Trung'
+    ]
+  },
+  {
+    province: 'Thành phố Cẩm Phả',
+    wards: [
+      'Phường Cẩm Bình',
+      'Phường Cẩm Đông',
+      'Phường Cẩm Phú',
+      'Phường Cẩm Sơn',
+      'Phường Cẩm Tây',
+      'Phường Cẩm Thạch',
+      'Phường Cẩm Thành',
+      'Phường Cẩm Thịnh',
+      'Phường Cẩm Thủy',
+      'Phường Cẩm Trung',
+      'Phường Cửa Ông',
+      'Phường Mông Dương',
+      'Phường Quang Hanh',
+      'Xã Cẩm Hải',
+      'Xã Cộng Hòa',
+      'Xã Dương Huy'
+    ]
+  },
+  {
+    province: 'Thành phố Uông Bí',
+    wards: [
+      'Phường Bắc Sơn',
+      'Phường Nam Khê',
+      'Phường Phương Đông',
+      'Phường Phương Nam',
+      'Phường Quang Trung',
+      'Phường Thanh Sơn',
+      'Phường Trưng Vương',
+      'Phường Vàng Danh',
+      'Phường Yên Thanh',
+      'Xã Điền Công',
+      'Xã Phương Đông',
+      'Xã Thượng Yên Công',
+      'Xã Yên Thượng'
+    ]
+  },
+  {
+    province: 'Thị xã Quảng Yên',
+    wards: [
+      'Phường Cộng Hòa',
+      'Phường Đông Mai',
+      'Phường Hà An',
+      'Phường Minh Thành',
+      'Phường Nam Hòa',
+      'Phường Phong Cốc',
+      'Phường Phong Hải',
+      'Phường Quảng Yên',
+      'Phường Tân An',
+      'Phường Yên Giang',
+      'Phường Yên Hải',
+      'Xã Cẩm La',
+      'Xã Hiệp Hòa',
+      'Xã Hoàng Tân',
+      'Xã Liên Hòa',
+      'Xã Liên Vị',
+      'Xã Sông Khoai',
+      'Xã Tiền An',
+      'Xã Tiền Phong'
+    ]
+  },
+  {
+    province: 'Huyện Vân Đồn',
+    wards: [
+      'Thị trấn Cái Rồng',
+      'Xã Bản Sen',
+      'Xã Bình Dân',
+      'Xã Đài Xuyên',
+      'Xã Đoàn Kết',
+      'Xã Đông Xá',
+      'Xã Hạ Long',
+      'Xã Minh Châu',
+      'Xã Ngọc Vừng',
+      'Xã Quan Lạn',
+      'Xã Thắng Lợi',
+      'Xã Vạn Yên'
+    ]
+  },
+  {
+    province: 'Huyện Cô Tô',
+    wards: [
+      'Thị trấn Cô Tô',
+      'Xã Đồng Tiến',
+      'Xã Thanh Lân'
+    ]
+  },
+  {
+    province: 'Huyện Đông Triều',
+    wards: [
+      'Thị trấn Đông Triều',
+      'Thị trấn Mạo Khê',
+      'Xã An Sinh',
+      'Xã Bình Dương',
+      'Xã Bình Khê',
+      'Xã Đức Chính',
+      'Xã Hồng Phong',
+      'Xã Hồng Thái Đông',
+      'Xã Hồng Thái Tây',
+      'Xã Hưng Đạo',
+      'Xã Kim Sơn',
+      'Xã Nguyễn Huệ',
+      'Xã Tân Việt',
+      'Xã Thủy An',
+      'Xã Tràng An',
+      'Xã Tràng Lương',
+      'Xã Việt Dân',
+      'Xã Xuân Sơn',
+      'Xã Yên Đức',
+      'Xã Yên Thọ'
     ]
   }
 ];
@@ -131,7 +303,8 @@ const seedDatabase = async (force = false) => {
       console.log('📍 Seeding location data...');
       await Location.insertMany(locations);
       results.locations.inserted = locations.length;
-      console.log(`✅ Inserted ${locations.length} location(s)`);
+      const totalWards = locations.reduce((sum, loc) => sum + loc.wards.length, 0);
+      console.log(`✅ Inserted ${locations.length} province(s)/city(ies) with ${totalWards} total wards/communes`);
     } else {
       results.locations.skipped = true;
       console.log(`ℹ️  Locations already exist (${locationCount} found). Skipping...`);

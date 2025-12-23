@@ -36,7 +36,10 @@ const runSeed = async () => {
     console.log('\n✨ Database seeding completed successfully!');
     console.log('\n📋 Summary:');
     console.log(`   - Categories: ${result.results.categories.inserted} inserted${result.results.categories.skipped ? ' (skipped - already exists)' : ''}`);
-    console.log(`   - Locations: ${result.results.locations.inserted} inserted${result.results.locations.skipped ? ' (skipped - already exists)' : ''}`);
+    console.log(`   - Locations: ${result.results.locations.inserted} province(s)/city(ies) inserted${result.results.locations.skipped ? ' (skipped - already exists)' : ''}`);
+    if (result.results.locations.inserted > 0) {
+      console.log(`     Includes: Huế, Quảng Ninh (Hạ Long, Móng Cái, Cẩm Phả, Uông Bí, Quảng Yên, Vân Đồn, Cô Tô, Đông Triều)`);
+    }
     console.log(`   - Admin user: ${result.results.admin.created ? 'Created' : 'Already exists'}`);
     console.log('\n👉 You can now start the server with: npm run dev');
     
