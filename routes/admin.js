@@ -169,7 +169,7 @@ router.get('/stats', protect, admin, getStats);
  *             properties:
  *               force:
  *                 type: boolean
- *                 description: If true, will clear existing data and reseed (default: false)
+ *                 description: "If true, will clear existing data and reseed. Default is false"
  *                 example: false
  *     responses:
  *       200:
