@@ -4,6 +4,7 @@
 const User = require('../models/User');
 const Task = require('../models/Task');
 const Message = require('../models/Message');
+const { seedDatabase } = require('../utils/seedData');
 
 /**
  * @route   GET /api/admin/users
@@ -118,10 +119,38 @@ const getStats = async (req, res) => {
   }
 };
 
+/**
+ * @route   POST /api/admin/seed
+ * @desc    Seed database with initial data (Admin only)
+ * @access  Private (Admin only)
+ */
+const seedDatabaseEndpoint = async (req, res) => {
+  try {
+    const { force } = req.body; // Optional: force reseed even if data exists
+    
+    console.log('🌱 Admin requested database seeding...');
+    const result = await seedDatabase(force === true);
+    
+    res.json({
+      success: true,
+      message: result.message,
+      results: result.results
+    });
+  } catch (error) {
+    console.error('Seed database error:', error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Error seeding database',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+};
+
 module.exports = {
   getUsers,
   getTasks,
-  getStats
+  getStats,
+  seedDatabaseEndpoint
 };
 
 

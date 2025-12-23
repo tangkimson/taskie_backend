@@ -16,6 +16,10 @@ services:
         generateValue: true
       - key: CORS_ORIGIN
         sync: false
+      - key: AUTO_SEED
+        value: "true"
+
+
 
 
 

@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 /**
  * Connect to MongoDB database
  * Uses connection string from environment variables
+ * @returns {Promise<mongoose.Connection>} MongoDB connection
  */
 const connectDB = async () => {
   try {
@@ -14,6 +15,8 @@ const connectDB = async () => {
     
     console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
     console.log(`📊 Database Name: ${conn.connection.name}`);
+    
+    return conn;
   } catch (error) {
     console.error('❌ MongoDB Connection Error:', error.message);
     // Exit process with failure
@@ -22,6 +25,8 @@ const connectDB = async () => {
 };
 
 module.exports = connectDB;
+
+
 
 
 

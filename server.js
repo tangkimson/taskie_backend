@@ -8,6 +8,7 @@ const path = require('path');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./swagger');
 const connectDB = require('./config/database');
+const { seedDatabase, needsSeeding } = require('./utils/seedData');
 
 // Load environment variables from .env file
 dotenv.config();
@@ -15,8 +16,35 @@ dotenv.config();
 // Initialize Express app
 const app = express();
 
-// Connect to MongoDB database
-connectDB();
+// Connect to MongoDB database and auto-seed if needed
+const initializeDatabase = async () => {
+  try {
+    // Connect to MongoDB
+    await connectDB();
+    
+    // Wait a bit for connection to be fully established
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    // Auto-seed database if empty (only in production or if explicitly enabled)
+    const shouldAutoSeed = process.env.AUTO_SEED === 'true' || process.env.NODE_ENV === 'production';
+    
+    if (shouldAutoSeed) {
+      const needsSeed = await needsSeeding();
+      if (needsSeed) {
+        console.log('🌱 Database appears empty. Auto-seeding initial data...');
+        await seedDatabase(false); // false = don't force, only seed if empty
+        console.log('✅ Auto-seeding completed!');
+      } else {
+        console.log('✅ Database already has data. Skipping auto-seed.');
+      }
+    }
+  } catch (error) {
+    console.error('❌ Database initialization error:', error);
+  }
+};
+
+// Initialize database (non-blocking)
+initializeDatabase();
 
 // Middleware
 // CORS - Allow frontend to make requests to backend

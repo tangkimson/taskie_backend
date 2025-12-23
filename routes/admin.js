@@ -6,7 +6,8 @@ const router = express.Router();
 const {
   getUsers,
   getTasks,
-  getStats
+  getStats,
+  seedDatabaseEndpoint
 } = require('../controllers/adminController');
 const { protect, admin } = require('../middleware/auth');
 
@@ -149,6 +150,71 @@ router.get('/tasks', protect, admin, getTasks);
  *               $ref: '#/components/schemas/Error'
  */
 router.get('/stats', protect, admin, getStats);
+
+/**
+ * @swagger
+ * /api/admin/seed:
+ *   post:
+ *     summary: Seed database with initial data (Admin only)
+ *     description: Populate database with categories, locations, and admin user if database is empty. Safe to run multiple times.
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               force:
+ *                 type: boolean
+ *                 description: If true, will clear existing data and reseed (default: false)
+ *                 example: false
+ *     responses:
+ *       200:
+ *         description: Database seeded successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Database seeding completed successfully!
+ *                 results:
+ *                   type: object
+ *                   properties:
+ *                     categories:
+ *                       type: object
+ *                       properties:
+ *                         inserted:
+ *                           type: number
+ *                         skipped:
+ *                           type: boolean
+ *                     locations:
+ *                       type: object
+ *                       properties:
+ *                         inserted:
+ *                           type: number
+ *                         skipped:
+ *                           type: boolean
+ *                     admin:
+ *                       type: object
+ *                       properties:
+ *                         created:
+ *                           type: boolean
+ *                         skipped:
+ *                           type: boolean
+ *       401:
+ *         description: Not authorized
+ *       403:
+ *         description: Forbidden - Admin access required
+ */
+router.post('/seed', protect, admin, seedDatabaseEndpoint);
 
 module.exports = router;
 
