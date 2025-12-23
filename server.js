@@ -8,7 +8,7 @@ const path = require('path');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./swagger');
 const connectDB = require('./config/database');
-const { seedDatabase, needsSeeding } = require('./utils/seedData');
+const { seedDatabase } = require('./utils/seedData');
 
 // Load environment variables from .env file
 dotenv.config();
@@ -25,18 +25,14 @@ const initializeDatabase = async () => {
     // Wait a bit for connection to be fully established
     await new Promise(resolve => setTimeout(resolve, 1000));
     
-    // Auto-seed database if empty (only in production or if explicitly enabled)
+    // Auto-seed database (only in production or if explicitly enabled)
+    // Smart seeding will only add missing items, won't delete existing data
     const shouldAutoSeed = process.env.AUTO_SEED === 'true' || process.env.NODE_ENV === 'production';
     
     if (shouldAutoSeed) {
-      const needsSeed = await needsSeeding();
-      if (needsSeed) {
-        console.log('🌱 Database appears empty. Auto-seeding initial data...');
-        await seedDatabase(false); // false = don't force, only seed if empty
-        console.log('✅ Auto-seeding completed!');
-      } else {
-        console.log('✅ Database already has data. Skipping auto-seed.');
-      }
+      console.log('🌱 Auto-seeding database (will add missing items only)...');
+      await seedDatabase(false); // false = don't force, smart seeding adds missing items
+      console.log('✅ Auto-seeding completed!');
     }
   } catch (error) {
     console.error('❌ Database initialization error:', error);
