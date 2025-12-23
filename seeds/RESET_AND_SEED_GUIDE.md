@@ -226,3 +226,4 @@ The comprehensive seed data covers:
 - All test data uses realistic Vietnamese names and scenarios
 - Image paths in tasks are placeholders - actual images need to be uploaded through the application
 
+
