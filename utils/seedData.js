@@ -294,8 +294,9 @@ const seedDatabase = async (force = false) => {
     }
 
     // Seed Locations
-    if (force || locationCount === 0) {
-      if (force && locationCount > 0) {
+    if (force) {
+      // Force mode: clear and reseed everything
+      if (locationCount > 0) {
         console.log('🗑️  Clearing existing locations...');
         await Location.deleteMany({});
       }
@@ -305,9 +306,36 @@ const seedDatabase = async (force = false) => {
       results.locations.inserted = locations.length;
       const totalWards = locations.reduce((sum, loc) => sum + loc.wards.length, 0);
       console.log(`✅ Inserted ${locations.length} province(s)/city(ies) with ${totalWards} total wards/communes`);
+    } else if (locationCount === 0) {
+      // Database is empty: insert all locations
+      console.log('📍 Seeding location data...');
+      await Location.insertMany(locations);
+      results.locations.inserted = locations.length;
+      const totalWards = locations.reduce((sum, loc) => sum + loc.wards.length, 0);
+      console.log(`✅ Inserted ${locations.length} province(s)/city(ies) with ${totalWards} total wards/communes`);
     } else {
-      results.locations.skipped = true;
-      console.log(`ℹ️  Locations already exist (${locationCount} found). Skipping...`);
+      // Database has some locations: add missing ones intelligently
+      console.log('📍 Checking for missing locations...');
+      let insertedCount = 0;
+      let totalNewWards = 0;
+      
+      for (const location of locations) {
+        const exists = await Location.findOne({ province: location.province });
+        if (!exists) {
+          await Location.create(location);
+          insertedCount++;
+          totalNewWards += location.wards.length;
+          console.log(`  ✅ Added: ${location.province} (${location.wards.length} wards/communes)`);
+        }
+      }
+      
+      if (insertedCount > 0) {
+        results.locations.inserted = insertedCount;
+        console.log(`✅ Added ${insertedCount} new location(s) with ${totalNewWards} total wards/communes`);
+      } else {
+        results.locations.skipped = true;
+        console.log(`ℹ️  All locations already exist (${locationCount} found). No new locations added.`);
+      }
     }
 
     // Create default admin user
