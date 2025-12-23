@@ -4,7 +4,12 @@
 const User = require('../models/User');
 const Task = require('../models/Task');
 const Message = require('../models/Message');
+const Favorite = require('../models/Favorite');
+const JobCategory = require('../models/JobCategory');
+const Location = require('../models/Location');
+const mongoose = require('mongoose');
 const { seedDatabase } = require('../utils/seedData');
+const { comprehensiveSeed } = require('../utils/comprehensiveSeedData');
 
 /**
  * @route   GET /api/admin/users
@@ -120,22 +125,77 @@ const getStats = async (req, res) => {
 };
 
 /**
+ * @route   POST /api/admin/reset
+ * @desc    Reset database - Delete all data (Admin only)
+ * @access  Private (Admin only)
+ */
+const resetDatabase = async (req, res) => {
+  try {
+    console.log('🗑️  Admin requested database reset...');
+    
+    // Delete all collections
+    const collections = [
+      Task,
+      Message,
+      Favorite,
+      JobCategory,
+      Location,
+      User
+    ];
+
+    const results = {};
+    
+    for (const Model of collections) {
+      const collectionName = Model.collection.name;
+      const count = await Model.countDocuments();
+      await Model.deleteMany({});
+      results[collectionName] = { deleted: count };
+      console.log(`   ✅ Deleted ${count} documents from ${collectionName}`);
+    }
+
+    res.json({
+      success: true,
+      message: 'Database reset completed successfully',
+      results
+    });
+  } catch (error) {
+    console.error('Reset database error:', error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Error resetting database',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+};
+
+/**
  * @route   POST /api/admin/seed
  * @desc    Seed database with initial data (Admin only)
  * @access  Private (Admin only)
  */
 const seedDatabaseEndpoint = async (req, res) => {
   try {
-    const { force } = req.body; // Optional: force reseed even if data exists
+    const { force, comprehensive } = req.body;
     
     console.log('🌱 Admin requested database seeding...');
-    const result = await seedDatabase(force === true);
     
-    res.json({
-      success: true,
-      message: result.message,
-      results: result.results
-    });
+    if (comprehensive === true) {
+      // Comprehensive seed (users, tasks, messages, favorites)
+      const result = await comprehensiveSeed();
+      res.json({
+        success: true,
+        message: 'Comprehensive database seeding completed successfully',
+        summary: result.summary
+      });
+    } else {
+      // Basic seed (categories, locations, admin only)
+      const result = await seedDatabase(force === true);
+      res.json({
+        success: true,
+        message: result.message,
+        results: result.results
+      });
+    }
   } catch (error) {
     console.error('Seed database error:', error);
     res.status(500).json({ 
@@ -146,11 +206,66 @@ const seedDatabaseEndpoint = async (req, res) => {
   }
 };
 
+/**
+ * @route   POST /api/admin/reset-and-seed
+ * @desc    Reset and seed database in one operation (Admin only)
+ * @access  Private (Admin only)
+ */
+const resetAndSeed = async (req, res) => {
+  try {
+    const { comprehensive } = req.body;
+    
+    console.log('🔄 Admin requested database reset and seed...');
+    
+    // First reset
+    const collections = [
+      Task,
+      Message,
+      Favorite,
+      JobCategory,
+      Location,
+      User
+    ];
+
+    for (const Model of collections) {
+      await Model.deleteMany({});
+    }
+    
+    console.log('✅ Database reset completed, starting seed...');
+    
+    // Then seed
+    if (comprehensive === true) {
+      const result = await comprehensiveSeed();
+      res.json({
+        success: true,
+        message: 'Database reset and comprehensive seeding completed successfully',
+        summary: result.summary
+      });
+    } else {
+      const result = await seedDatabase(true);
+      res.json({
+        success: true,
+        message: 'Database reset and basic seeding completed successfully',
+        results: result.results
+      });
+    }
+  } catch (error) {
+    console.error('Reset and seed error:', error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Error resetting and seeding database',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+};
+
 module.exports = {
   getUsers,
   getTasks,
   getStats,
-  seedDatabaseEndpoint
+  resetDatabase,
+  seedDatabaseEndpoint,
+  resetAndSeed
 };
 
 

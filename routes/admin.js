@@ -7,7 +7,9 @@ const {
   getUsers,
   getTasks,
   getStats,
-  seedDatabaseEndpoint
+  resetDatabase,
+  seedDatabaseEndpoint,
+  resetAndSeed
 } = require('../controllers/adminController');
 const { protect, admin } = require('../middleware/auth');
 
@@ -215,6 +217,55 @@ router.get('/stats', protect, admin, getStats);
  *         description: Forbidden - Admin access required
  */
 router.post('/seed', protect, admin, seedDatabaseEndpoint);
+
+/**
+ * @swagger
+ * /api/admin/reset:
+ *   post:
+ *     summary: Reset database - Delete all data (Admin only)
+ *     description: Permanently delete all data from all collections. Use with extreme caution!
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Database reset successfully
+ *       401:
+ *         description: Not authorized
+ *       403:
+ *         description: Forbidden - Admin access required
+ */
+router.post('/reset', protect, admin, resetDatabase);
+
+/**
+ * @swagger
+ * /api/admin/reset-and-seed:
+ *   post:
+ *     summary: Reset and seed database in one operation (Admin only)
+ *     description: Delete all data and immediately seed with test data
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               comprehensive:
+ *                 type: boolean
+ *                 description: "If true, uses comprehensive seed (users, tasks, messages, favorites). Default is false (basic seed)"
+ *                 example: true
+ *     responses:
+ *       200:
+ *         description: Database reset and seeded successfully
+ *       401:
+ *         description: Not authorized
+ *       403:
+ *         description: Forbidden - Admin access required
+ */
+router.post('/reset-and-seed', protect, admin, resetAndSeed);
 
 module.exports = router;
 
