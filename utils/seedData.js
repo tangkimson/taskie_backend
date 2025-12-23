@@ -255,6 +255,21 @@ const locations = [
       'Xã Yên Đức',
       'Xã Yên Thọ'
     ]
+  },
+  {
+    province: 'Thành phố Hồ Chí Minh',
+    wards: [
+      'Phường Sài Gòn',
+      'Phường Gò Vấp',
+      'Phường Trung Mỹ Tây'
+    ]
+  },
+  {
+    province: 'Thành phố Đà Nẵng',
+    wards: [
+      'Phường Hải Châu',
+      'Phường Hòa Cường'
+    ]
   }
 ];
 
@@ -341,10 +356,29 @@ const seedDatabase = async (force = false) => {
     } else {
       // Database has some locations: add missing ones intelligently
       console.log('📍 Checking for missing locations...');
+      
+      // First, remove any invalid locations (like "All Provinces/Cities")
+      const invalidLocations = await Location.find({ 
+        province: { $in: ['All Provinces/Cities', 'All Categories', ''] } 
+      });
+      if (invalidLocations.length > 0) {
+        console.log(`🗑️  Removing ${invalidLocations.length} invalid location(s)...`);
+        await Location.deleteMany({ 
+          province: { $in: ['All Provinces/Cities', 'All Categories', ''] } 
+        });
+      }
+      
       let insertedCount = 0;
       let totalNewWards = 0;
       
       for (const location of locations) {
+        // Skip invalid location names
+        if (!location.province || location.province.trim() === '' || 
+            location.province === 'All Provinces/Cities' || 
+            location.province === 'All Categories') {
+          continue;
+        }
+        
         const exists = await Location.findOne({ province: location.province });
         if (!exists) {
           await Location.create(location);
